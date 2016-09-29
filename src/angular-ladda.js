@@ -37,7 +37,7 @@
         }
       };
     })
-    .directive('ladda', ['ladda', '$timeout', function (laddaOption, $timeout) {
+    .directive('ladda', ['ladda', '$timeout', 'TaskMonitor', function (laddaOption, $timeout, TaskMonitor) {
       return {
         restrict: 'A',
         priority: -1,
@@ -66,9 +66,8 @@
             // create ladda button
             var ladda = Ladda.create( element[0] );
 
-            // add watch!
-            scope.$watch(attrs.ladda, function(loading) {
-              if(!loading && !angular.isNumber(loading)) {
+            TaskMonitor.subscribe(attrs.ladda, function(showSpinner){
+              if(!showSpinner && !angular.isNumber(showSpinner)) {
                 ladda.stop();
                 // When the button also have the ng-disabled directive it needs to be
                 // re-evaluated since the disabled attribute is removed by the 'stop' method.
@@ -80,8 +79,8 @@
               if(!ladda.isLoading()) {
                 ladda.start();
               }
-              if(angular.isNumber(loading)) {
-                ladda.setProgress(loading);
+              if(angular.isNumber(showSpinner)) {
+                ladda.setProgress(showSpinner);
               }
             });
             
